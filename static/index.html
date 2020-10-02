@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <meta lang="de">
     <title>Campus map</title>
-    <link rel="stylesheet" href="leaflet/leaflet.css" crossorigin="" />
-    <script src="leaflet/leaflet.js" crossorigin=""></script>
     <link href="https://cdn.osmbuildings.org/4.1.1/OSMBuildings.css" rel="stylesheet">
     <script src="https://cdn.osmbuildings.org/4.1.1/OSMBuildings.js"></script>
 
@@ -23,26 +21,34 @@
     });*/
     var map = new OSMBuildings({
 
-	container: 'mapid',
+        container: 'mapid',
 
-	position: { latitude: 48.745044, longitude: 9.106955 },
+        position: { latitude: 48.745044, longitude: 9.106955 },
+        zoom: 16,
+        minZoom: 15,
+        maxZoom: 20,
+        attribution: '© Data <a href="https://openstreetmap.org/copyright/">OpenStreetMap</a> © Map <a href="https://mapbox.com/">Mapbox</a> © 3D <a href="https://osmbuildings.org/copyright/">OSM Buildings</a>'
 
-	zoom: 16,
+    })
 
-	minZoom: 15,
+    map.addMapTiles('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png');
+    map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
+    map.on('pointerup', e => {
 
-	maxZoom: 20,
-
-	attribution: '© Data <a href="https://openstreetmap.org/copyright/">OpenStreetMap</a> © Map <a href="https://mapbox.com/">Mapbox</a> © 3D <a href="https://osmbuildings.org/copyright/">OSM Buildings</a>'
-
-})
-
-
-
-map.addMapTiles('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png');
-
-map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
-
+        alert(featureToText(e.features));
+    })
+    function featureToText(features) {
+        if (!features) {
+            return "none selected";
+        }
+        else {
+            output = "";
+            features.forEach(feature => {
+                output += feature.id + ";";
+            });
+        }
+        return output;
+    }
 </script>
 
 </html>
