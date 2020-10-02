@@ -3,8 +3,22 @@
     <meta charset="utf-8">
     <meta lang="de">
     <title>Campus map</title>
+    <link rel="stylesheet" href="leaflet/leaflet.css"
+    crossorigin=""/>
+    <script src="leaflet/leaflet.js"
+    crossorigin=""></script>
 </head>
 <body>
+    <div id="mapid" style="min-height: 80vh;"></div>
 
 </body>
+<script>
+    var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+    L.tileLayer('https://a.tile.openstreetmap.org/${z}/${x}/${y}.png', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    tileSize: 512,
+    zoomOffset: -1,
+}).addTo(mymap);
+</script>
 </html>
