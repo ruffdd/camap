@@ -1,0 +1,11 @@
+FROM nginx
+RUN rm -r /etc/nginx/conf.d/*
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY static /static
+
+RUN apt-get update
+RUN apt-get install --yes build-essential python python-dev python-pip
+RUN pip install uwsgi
+EXPOSE 80/tcp
+CMD nginx -g "daemon off;"

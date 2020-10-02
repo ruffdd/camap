@@ -34,7 +34,13 @@
     map.addMapTiles('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png');
     map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
     map.on('pointerup', e => {
+        const featureIdList = e.features.map(feature => feature.id);
 
+        map.highlight(feature => {
+            if (featureIdList.indexOf(feature.id) > -1) {
+                return '#7777ff';
+            }
+        });
         alert(featureToText(e.features));
     })
     function featureToText(features) {
