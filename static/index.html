@@ -1,22 +1,48 @@
 <!DOCTYPE html>
+
 <head>
     <meta charset="utf-8">
     <meta lang="de">
     <title>Campus map</title>
-    <link rel="stylesheet" href="leaflet/leaflet.css"
-    crossorigin=""/>
-    <script src="leaflet/leaflet.js"
-    crossorigin=""></script>
+    <link rel="stylesheet" href="leaflet/leaflet.css" crossorigin="" />
+    <script src="leaflet/leaflet.js" crossorigin=""></script>
+    <link href="https://cdn.osmbuildings.org/4.1.1/OSMBuildings.css" rel="stylesheet">
+    <script src="https://cdn.osmbuildings.org/4.1.1/OSMBuildings.js"></script>
+
+
 </head>
+
 <body>
-    <div id="mapid" style="min-height: 80vh;"></div>
+    <div id="mapid" style="min-height: 100vh;"></div>
 
 </body>
 <script>
-    var map = L.map('mapid', {
-    center: [ 48.745044, 9.106955],
-    zoom: 24
-});
-L.tileLayer('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: 'Map data &copy; <a href="https://www.openstreetmap.de/">OpenStreetMap</a> contributors, <a href="https://creativecommons.de/licenses/by-sa/2.0/">CC-BY-SA</a>'}).addTo(map);
+    /*var map = L.map('mapid', {
+        center: [48.745044, 9.106955],
+        zoom: 24
+    });*/
+    var map = new OSMBuildings({
+
+	container: 'mapid',
+
+	position: { latitude: 48.745044, longitude: 9.106955 },
+
+	zoom: 16,
+
+	minZoom: 15,
+
+	maxZoom: 20,
+
+	attribution: '© Data <a href="https://openstreetmap.org/copyright/">OpenStreetMap</a> © Map <a href="https://mapbox.com/">Mapbox</a> © 3D <a href="https://osmbuildings.org/copyright/">OSM Buildings</a>'
+
+})
+
+
+
+map.addMapTiles('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png');
+
+map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
+
 </script>
+
 </html>
