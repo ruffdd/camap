@@ -10,6 +10,8 @@ this file is to get a list of all possible libraries for camap [​​k​ɐmăp
 ### OAuth 2
 wird anscheinend von stuvus für authentifizierung verwendet.
 
+### [flask](https://flask.palletsprojects.com)
+
 ## Beispiele von anderen Unis
 
 - [Passau](https://www.virtualtour.uni-passau.de/start/)
