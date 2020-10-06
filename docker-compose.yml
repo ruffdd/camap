@@ -10,3 +10,10 @@ services:
             - "80:80"
     db:
         image: mariadb
+        ports: 
+            - "3306:3306"
+        environment: 
+            MYSQL_ROOT_PASSWORD: "apestogether"
+            MYSQL_DATABASE: camap
+            MYSQL_USER: camap
+            MYSQL_PASSWORD: camaper
