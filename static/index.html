@@ -15,8 +15,8 @@
     <div id="info" style="float: left; min-width: 20vw;">
         <h1>Info</h1>
         <div class="show-content">
-            <form action="/api/building" method="POST">
-                <input name="id" type="text" readonly required title="id">
+            <form id='save-building' action="/api/building" method="POST">
+                <input name="id" type="text" onkeypress="return false;" required title="id">
                 <input name="short_name" type="text" title="Gebäude Numer z.b. V38" required>
                 <input name="name" type="text" title="Gebäude Name" required>
                 <textarea name="description_content" title="Beschreibung"></textarea>
@@ -39,34 +39,34 @@
         attribution: '© Data <a href="https://openstreetmap.org/copyright/">OpenStreetMap</a> © Map <a href="https://mapbox.com/">Mapbox</a> © 3D <a href="https://osmbuildings.org/copyright/">OSM Buildings</a>'
 
     })
-
     map.addMapTiles('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png');
     map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
     map.on('pointerup', e => {
         info = document.getElementById("info").getElementsByClassName("show-content")[0];
-
+        inputs = document.getElementById('save-building').querySelectorAll('input,textarea');
         if (e.features == undefined) {
             return;
         }
-        fetch('/api/building/' + e.features[0].properties.building)
+        fetch('/api/building/' + e.features[0].id.replace('r', ''))
             .then(res => res.json())
             .then((out) => {
-
-                document.getElementsByName('id')[0].value=out['id'];
+                for (let input in inputs) {
+                    inputs[input].value = out[inputs[input].name]
+                }
             });
     });
 
-    function setBuilding(){
-        inputs = document.getElementById('save-building').getElementsByTagName('input');
-        inputs += document.getElementById('save-building').getElementsByTagName('textarea');
+    function setBuilding() {
+        inputs = document.getElementById('save-building').querySelectorAll('input,textarea');
+
         data = {};
         xhr = new XMLHttpRequest();
-        for (var input in inputs){
-            data[input.name]=input.value;
+        for (var input in inputs) {
+            data[input.name] = input.value;
         }
-        xhr.open('POST','/api/building');
-        xhr.setRequestHeader( 'Content-Type', 'application/json' );
-        xhr.send(data );
+        xhr.open('POST', '/api/building');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(data);
     }
 
 </script>

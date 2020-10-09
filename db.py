@@ -16,12 +16,18 @@ def tables():
   cursor.execute("show tables;")
   return cursor.fetchall()
 
-def get_building(osm_id:int):
+def get_building(id:int):
   result={}
-  result['id']=osm_id
-  result['name']=""
-  result['description_url']=""
-  result['adress_name']=""
+  result['id']=id
+  cursor.execute("SELECT OSMBuildings.id,Descript.title,Descript.shortname,Descript.fileurl  FROM OSMBuildings LEFT JOIN Descript on OSMBuildings.descript=Descript.shortname WHERE OSMBuildings.id="+str(id)+";")
+  response = cursor.fetchall()
+  if response== []:
+    return result
+  response=response[0]
+  result['id']=response[0]
+  result['name']=response[1]
+  result['short_name']=response[2]
+  result['description_content']=get_description(response[3])
   return result
 
 def get_description_url(shortname:str):
@@ -37,10 +43,15 @@ def set_description(path:str,text:str):
   file.write(text)
   file.close()
 
+def get_description(url:str):
+  file = open('data/'+url,'r')
+  output = file.read()
+  file.close()
+  return output
+
 def update_building(input:dict):
   flask_app.logger.debug("add building data:"+ str(input))
   assert input['short_name']!=''
-
   desc_path = get_description_url(input['short_name'])
   if desc_path=="":
     desc_path='description-'+input['short_name']+'.html'
@@ -48,10 +59,7 @@ def update_building(input:dict):
   set_description(desc_path,input['description_content'])
   cursor.execute("INSERT INTO Adresses (shortname,street,campus,nr) VALUES ('"+input['short_name']+"','','',0);")
   cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ('"+input['id']+"','"+input['short_name']+"','"+input['short_name']+"');")
-
-  if development:
-    response=cursor.fetchall()
-    flask_app.logger.debug(str(response))
+  mydb.commit()
 
 def load_sql_file(name):
   path="./sql/"+ name +("" if name.endswith(".sql") else ".sql")

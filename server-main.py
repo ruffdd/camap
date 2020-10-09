@@ -17,7 +17,7 @@ db.setup(app)
 def root():
     return send_file('./static/index.html')
 
-@app.route('/api/building/r<int:osm_id>',methods=['GET'])
+@app.route('/api/building/<int:osm_id>',methods=['GET'])
 def get_building(osm_id):
     return db.get_building(osm_id)
 
