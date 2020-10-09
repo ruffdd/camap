@@ -11,14 +11,23 @@
 </head>
 
 <body>
-    <div id="mapid" style="min-height: 100vh;"></div>
+    <div id="mapid" style="height: 500px; min-width: 70vw; float: right;"></div>
+    <div id="info" style="float: left; min-width: 20vw;">
+        <h1>Info</h1>
+        <div class="show-content">
+            <form action="/api/building" method="POST">
+                <input name="id" type="text" readonly required title="id">
+                <input name="short_name" type="text" title="Gebäude Numer z.b. V38" required>
+                <input name="name" type="text" title="Gebäude Name" required>
+                <textarea name="description_content" title="Beschreibung"></textarea>
+                <button id="save-building">Speichern</button>
+            </form>
+        </div>
+    </div>
 
 </body>
 <script>
-    /*var map = L.map('mapid', {
-        center: [48.745044, 9.106955],
-        zoom: 24
-    });*/
+    //document.getElementById("save-building").addEventListener('click',setBuilding);
     var map = new OSMBuildings({
 
         container: 'mapid',
@@ -34,27 +43,31 @@
     map.addMapTiles('https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png');
     map.addGeoJSONTiles('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
     map.on('pointerup', e => {
-        const featureIdList = e.features.map(feature => feature.id);
+        info = document.getElementById("info").getElementsByClassName("show-content")[0];
 
-        map.highlight(feature => {
-            if (featureIdList.indexOf(feature.id) > -1) {
-                return '#7777ff';
-            }
-        });
-        alert(featureToText(e.features));
-    })
-    function featureToText(features) {
-        if (!features) {
-            return "none selected";
+        if (e.features == undefined) {
+            return;
         }
-        else {
-            output = "";
-            features.forEach(feature => {
-                output += feature.id + ";";
+        fetch('/api/building/' + e.features[0].properties.building)
+            .then(res => res.json())
+            .then((out) => {
+                info.innerText = JSON.stringify(out);
             });
+    });
+
+    function setBuilding(){
+        inputs = document.getElementById('save-building').getElementsByTagName('input');
+        inputs += document.getElementById('save-building').getElementsByTagName('textarea');
+        data = {};
+        xhr = new XMLHttpRequest();
+        for (var input in inputs){
+            data[input.name]=input.value;
         }
-        return output;
+        xhr.open('POST','/api/building');
+        xhr.setRequestHeader( 'Content-Type', 'application/json' );
+        xhr.send(data );
     }
+
 </script>
 
 </html>

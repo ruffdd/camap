@@ -2,6 +2,7 @@ import mysql.connector
 import os
 from flask import Flask
 flask_app: Flask
+devlopment:bool=False
 mydb = mysql.connector.connect(
   host="localhost",
   database="camap",
@@ -24,7 +25,12 @@ def get_building(osm_id:int):
   return result
 
 def update_building(input:dict):
-  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ("+input['id']+','+input['adress_name']+','+input['description_url']+');')
+  flask_app.logger.debug("add building data:"+ str(input))
+  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ("+input['id']+','+input['short_name']+','+input['description_url']+');')
+
+  if development:
+    response=cursor.fetchall()
+    flask_app.logger.debug(str(response))
 
 def load_sql_file(name):
   path="./sql/"+ name +("" if name.endswith(".sql") else ".sql")
