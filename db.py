@@ -25,18 +25,23 @@ def get_building(osm_id:int):
   return result
 
 def get_description_url(shortname:str):
-  cursor.execute('SELECT fileurl FROM Descript WHERE shortname='+shortname+';')
+  cursor.execute("SELECT fileurl FROM Descript WHERE shortname='"+shortname+"';")
   res= cursor.fetchall()
   return '' if res.__len__()==0 else res[0]
 
 def set_description(path:str,text:str):
   assert path!=""
+  if not os.path.exists('data'):
+    os.mkdir('data')
+  file = open('data/'+path,'w+')
+  file.write(text)
+  file.close()
 
 def update_building(input:dict):
   flask_app.logger.debug("add building data:"+ str(input))
   assert input['short_name']!=''
 
-  desc_path = get_description_url(input['id'])
+  desc_path = get_description_url(input['short_name'])
   if desc_path=="":
     desc_path='description-'+input['short_name']+'.html'
     cursor.execute("INSERT INTO Descript (shortname,title,fileurl) VALUES ('"+input['short_name']+"','"+input['name']+"','"+desc_path+"');")
