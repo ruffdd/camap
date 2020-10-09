@@ -2,7 +2,7 @@ import mysql.connector
 import os
 from flask import Flask
 flask_app: Flask
-devlopment:bool=False
+development:bool=False
 mydb = mysql.connector.connect(
   host="localhost",
   database="camap",
@@ -24,9 +24,25 @@ def get_building(osm_id:int):
   result['adress_name']=""
   return result
 
+def get_description_url(id:int):
+  cursor.execute('SELECT Descript FROM OSMBuildings WHERE '+id+';')
+  res= cursor.fetchall()
+  return '' if res.__len__()==0 else res[0]
+
+def set_description(path:str,text:str):
+  assert path!=""
+
 def update_building(input:dict):
   flask_app.logger.debug("add building data:"+ str(input))
-  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ("+input['id']+','+input['short_name']+','+input['description_url']+');')
+  assert input['short_name']!=''
+
+  desc_path = get_description_url(input['id'])
+  if desc_path=="":
+    desc_path='description-'+input['short_name']+'.html'
+    cursor.execute("INSERT INTO Descript (title,fileurl) VALUES ('"+input['short_name']+"','"+desc_path+"');")
+  set_description(desc_path,input['description_content'])
+  cursor.execute("INSERT INTO Adresses (shortname,street,campus,nr) VALUES ('"+input['short_name']+"','','',0);")
+  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ('"+input['id']+"','"+input['short_name']+"','"+desc_path+"');")
 
   if development:
     response=cursor.fetchall()

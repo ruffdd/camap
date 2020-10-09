@@ -51,7 +51,8 @@
         fetch('/api/building/' + e.features[0].properties.building)
             .then(res => res.json())
             .then((out) => {
-                info.innerText = JSON.stringify(out);
+
+                document.getElementsByName('id')[0].value=out['id'];
             });
     });
 
