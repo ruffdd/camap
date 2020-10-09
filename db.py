@@ -24,8 +24,8 @@ def get_building(osm_id:int):
   result['adress_name']=""
   return result
 
-def get_description_url(id:int):
-  cursor.execute('SELECT Descript FROM OSMBuildings WHERE '+id+';')
+def get_description_url(shortname:str):
+  cursor.execute('SELECT fileurl FROM Descript WHERE shortname='+shortname+';')
   res= cursor.fetchall()
   return '' if res.__len__()==0 else res[0]
 
@@ -39,10 +39,10 @@ def update_building(input:dict):
   desc_path = get_description_url(input['id'])
   if desc_path=="":
     desc_path='description-'+input['short_name']+'.html'
-    cursor.execute("INSERT INTO Descript (title,fileurl) VALUES ('"+input['short_name']+"','"+desc_path+"');")
+    cursor.execute("INSERT INTO Descript (shortname,title,fileurl) VALUES ('"+input['short_name']+"','"+input['name']+"','"+desc_path+"');")
   set_description(desc_path,input['description_content'])
   cursor.execute("INSERT INTO Adresses (shortname,street,campus,nr) VALUES ('"+input['short_name']+"','','',0);")
-  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ('"+input['id']+"','"+input['short_name']+"','"+desc_path+"');")
+  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ('"+input['id']+"','"+input['short_name']+"','"+input['short_name']+"');")
 
   if development:
     response=cursor.fetchall()
