@@ -56,7 +56,7 @@ def update_building(input:dict):
   if desc_path=="":
     desc_path='description-'+input['short_name']+'.html'
     insert(cursor,'Descript',['shortname','title','fileurl'],[input['short_name'],input['name'],desc_path],True)
-  set_description(desc_path,input['description_content'])
+  set_description(desc_path[0],input['description_content'])
   insert(cursor,'Adresses', ['shortname','street','campus','nr'],[input['short_name'],'','',0],True)
   insert(cursor, 'OSMBuildings',['id','adress','descript'], [input['id'],input['short_name'],input['short_name']],True)
   mydb.commit()
