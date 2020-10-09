@@ -17,10 +17,6 @@ db.setup(app)
 def root():
     return send_file('./static/index.html')
 
-@app.route('/leaflet/<path:path>', methods=['GET'])
-def leaflet(path):
-    return send_from_directory('libs/leaflet',path)
-
 @app.route('/api/building/r<int:osm_id>',methods=['GET'])
 def get_building(osm_id):
     return db.get_building(osm_id)
