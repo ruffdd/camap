@@ -55,10 +55,10 @@ def update_building(input:dict):
   desc_path = get_description_url(input['short_name'])
   if desc_path=="":
     desc_path='description-'+input['short_name']+'.html'
-    cursor.execute("INSERT INTO Descript (shortname,title,fileurl) VALUES ('"+input['short_name']+"','"+input['name']+"','"+desc_path+"');")
+    insert(cursor,'Descript',['shortname','title','fileurl'],[input['short_name'],input['name'],desc_path],True)
   set_description(desc_path,input['description_content'])
-  cursor.execute("INSERT INTO Adresses (shortname,street,campus,nr) VALUES ('"+input['short_name']+"','','',0);")
-  cursor.execute("INSERT INTO OSMBuildings (id,adress,descript) VALUES ('"+input['id']+"','"+input['short_name']+"','"+input['short_name']+"');")
+  insert(cursor,'Adresses', ['shortname','street','campus','nr'],[input['short_name'],'','',0],True)
+  insert(cursor, 'OSMBuildings',['id','adress','descript'], [input['id'],input['short_name'],input['short_name']],True)
   mydb.commit()
 
 def load_sql_file(name):
@@ -90,3 +90,17 @@ def setup(app:Flask):
       flask_app.logger.error('could no load sql file "' + sql_file_name+'" to initialize database')
 
 
+def insert(cursor,table:str,columns:[],values:[],update:bool=False):
+  assert len(columns) == len(values)
+  command = "INSERT INTO "+table +' '
+  command += str(columns).replace('[','(').replace(']',')').replace("'",'')
+  command += " VALUES "
+  command += str(values).replace('[','(').replace(']',')')
+  if update:
+    command += " ON DUPLICATE KEY UPDATE "
+    for i in range(len(values)):
+      command+=columns[i]+"='"+str(values[i])+"',"
+    command=command[:-1]
+  
+  command += ';'
+  cursor.execute(command)
