@@ -1,10 +1,13 @@
 import mysql.connector
+from os import getenv
 import os
 from flask import Flask
 flask_app: Flask
 development:bool=False
+db_host=getenv("DB_HOST")
+db_host=("localhost" if db_host=='' else db_host)
 mydb = mysql.connector.connect(
-  host="localhost",
+  host=db_host,
   database="camap",
   user="camap",
   password="camaper"

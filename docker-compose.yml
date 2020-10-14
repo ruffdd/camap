@@ -8,6 +8,9 @@ services:
             - db
         ports: 
             - "80:80"
+        environment: 
+            DB_HOST : db
+            FLASK_ENV : development
     db:
         image: mariadb
         ports: 
