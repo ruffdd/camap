@@ -12,10 +12,14 @@ else:
     app.logger.setLevel(30)
 db.setup(app)
 
-
-@app.route('/', methods=['GET'])
-def root():
-    return send_file('./static/index.html')
+if development:
+    @app.route('/', methods=['GET'])
+    def root():
+        return send_file('./static/index.html')
+    @app.route('/deb/mysql/print',methods=['GET'])
+    def debug():
+        text=str(db.tables()).replace('(','').replace(')','').replace('[','').replace(']','').replace("'",'').replace(',',"<br>")
+        return text
 
 @app.route('/api/building/<int:osm_id>',methods=['GET'])
 def get_building(osm_id):
@@ -33,9 +37,3 @@ def set_building():
         app.logger.debug(traceback.print_exc())
     response.headers.set('Location','/')
     return response
-
-if development:
-    @app.route('/deb/mysql/print',methods=['GET'])
-    def debug():
-        text=str(db.tables()).replace('(','').replace(')','').replace('[','').replace(']','').replace("'",'').replace(',',"<br>")
-        return text
